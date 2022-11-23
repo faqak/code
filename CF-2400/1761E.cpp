@@ -59,8 +59,8 @@ int main() {
     for (int t : blocks[0]) std::cout << t + 1 << " \n"[t == blocks[0].back()];
   };
 
-  int T;
-  std::cin >> T;
-  while (T--) sol();
+  int t;
+  std::cin >> t;
+  while (t--) sol();
   return 0;
 }

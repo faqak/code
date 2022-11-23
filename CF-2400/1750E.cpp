@@ -31,8 +31,8 @@ int main() {
     std::cout << ans / 2 - res << '\n';
   };
 
-  int T;
-  std::cin >> T;
-  while (T--) sol();
+  int t;
+  std::cin >> t;
+  while (t--) sol();
   return 0;
 }
