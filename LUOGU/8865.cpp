@@ -27,11 +27,9 @@ void solve() {
     for (int j = 0; j < m; ++j) dow[i][j] = (1 - a[i][j]) * (dow[i + 1][j] + 1);
   for (int i = 0; i < n; ++i) for_each(all(rig[i]), [](int &x) { --x; }), for_each(all(dow[i]), [](int &x) { --x; });
   for (int i = n - 1; ~i; --i)
-    for (int j = 0; j < m; ++j)
-      suf[i][j] = suf[i + 1][j] + Z(1 - a[i][j]) * Z(rig[i][j]),
-      fus[i][j] = fus[i + 1][j] + Z(1 - a[i][j]) * Z(rig[i][j]) * Z(dow[i][j]);
-  for (int i = 0; i < n; ++i)
     for (int j = 0; j < m; ++j) {
+      suf[i][j] = suf[i + 1][j] + Z(1 - a[i][j]) * Z(rig[i][j]);
+      fus[i][j] = fus[i + 1][j] + Z(1 - a[i][j]) * Z(rig[i][j]) * Z(dow[i][j]);
       if (a[i][j]) continue;
       if (dow[i][j] < 2) continue;
       v_c += Z(rig[i][j]) * (suf[i + 2][j] - suf[i + dow[i][j] + 1][j]);
