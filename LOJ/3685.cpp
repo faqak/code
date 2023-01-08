@@ -10,14 +10,12 @@ std::vector<int> g[kN], dag[2 * kN * (kLog + 3)];
 
 void Dfs(int u, int fa) {
   f[0][0][u] = u + m, f[1][0][u] = u + m + n, jump[0][u] = fa, dep[u] = dep[fa] + 1;
-  if (u > 1)
-    for (int i = 1; i < kLog; ++i) {
-      jump[i][u] = jump[i - 1][jump[i - 1][u]];
-      f[0][i][u] = ++tot;
-      dag[f[0][i - 1][u]].emplace_back(f[0][i][u]), dag[f[0][i - 1][jump[i - 1][u]]].emplace_back(f[0][i][u]);
-      f[1][i][u] = ++tot;
-      dag[f[1][i][u]].emplace_back(f[1][i - 1][u]), dag[f[1][i][u]].emplace_back(f[1][i - 1][jump[i - 1][u]]);
-    }
+  for (int i = 1; i < kLog; ++i) {
+    jump[i][u] = jump[i - 1][jump[i - 1][u]], f[0][i][u] = ++tot, dag[f[0][i - 1][u]].emplace_back(f[0][i][u]);
+    if (jump[i - 1][u]) dag[f[0][i - 1][jump[i - 1][u]]].emplace_back(f[0][i][u]);
+    f[1][i][u] = ++tot, dag[f[1][i][u]].emplace_back(f[1][i - 1][u]);
+    if (jump[i - 1][u]) dag[f[1][i][u]].emplace_back(f[1][i - 1][jump[i - 1][u]]);
+  }
   for (int v : g[u])
     if (v != fa) Dfs(v, u);
 }
@@ -34,7 +32,7 @@ int Get(int u, int v) {
 void Solve() {
   std::cin >> n;
   for (int i = 1; i <= tot; ++i) dag[i].clear();
-  for (int i = 1; i <= n; ++i)
+  for (int i = 0; i <= n; ++i)
     for (int j = 0; j < kLog; ++j) jump[j][i] = f[0][j][i] = f[1][j][i] = 0;
   for (int i = 1; i <= n; ++i) g[i].clear();
   for (int i = 1, u, v; i < n; ++i) std::cin >> u >> v, g[u].emplace_back(v), g[v].emplace_back(u);
