@@ -32,7 +32,9 @@ int main() {
 
   auto Pushup = [&](int o) { t[o].val = t[o * 2].val + t[o * 2 + 1].val; };
   auto Pushdown = [&](int o) {
-    if (t[o].mul.val() != 1) t[o * 2].val *= t[o].mul, t[o * 2 + 1].val *= t[o].mul, t[o].mul = 1;
+    if (t[o].mul.val() != 1)
+      t[o * 2].val *= t[o].mul, t[o * 2 + 1].val *= t[o].mul, t[o * 2].mul *= t[o].mul, t[o * 2 + 1].mul *= t[o].mul,
+          t[o].mul = 1;
   };
 
   std::function<void(int, int, int)> Build = [&](int o, int l, int r) {
@@ -57,15 +59,25 @@ int main() {
     Pushdown(o), Add(o * 2 + (x > mid), x, y), Pushup(o);
   };
 
+  std::vector<int> tre(n, 0);
+
+  auto Addt = [&](int x, int v) {
+    for (++x; x <= n; x += x & -x) tre[x - 1] += v;
+  };
+
+  auto Que = [&](int x) {
+    int v = 0;
+    for (++x; x; x &= x - 1) v += tre[x - 1];
+    return v;
+  };
+
   Build(1, 0, n - 1);
   for (int i = 0; i < n; ++i) {
-    ans += Query(1, 0, pos[i] - 1) * tot / 2 / (a[i] - i - 1);
-    ans -= Query(1, pos[i] + 1, n - 1) * tot / 2 / (a[i] - i - 1);
-    Z cnt = 0;
-    for (int j = 0; j < i; ++j) cnt += (pos[j] > pos[i]);
-    ans += tot * cnt;
-
-    Add(1, pos[i], a[i] - i), t[1].mul = t[1].mul * (a[i] - i - 1) / (a[i] - i);
+    ans += Query(1, 0, pos[i] - 1) * tot / 2 / (a[i] - i);
+    ans -= Query(1, pos[i] + 1, n - 1) * tot / 2 / (a[i] - i);
+    Z coef = Z(a[i] - i - 1) / Z(a[i] - i);
+    ans += tot * (Que(n - 1) - Que(pos[i])), Addt(pos[i], 1);
+    t[1].mul = t[1].mul * coef, t[1].val = t[1].val * coef, Add(1, pos[i], Z(a[i] - i - 1));
   }
   std::cout << ans << "\n";
   return 0;
